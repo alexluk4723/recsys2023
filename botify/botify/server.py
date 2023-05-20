@@ -3,6 +3,12 @@ import logging
 import time
 from dataclasses import asdict
 from datetime import datetime
+from botify.recommenders.contextual2 import Contextual2
+from botify.recommenders.contextual1 import Contextual1
+from botify.recommenders.contextual3 import Contextual3
+from botify.recommenders.contextual0_25 import Contextual0_25
+from botify.recommenders.contextual0_5 import Contextual0_5
+from botify.recommenders.contextualtreshold import ContextualTreshold
 
 from flask import Flask
 from flask_redis import Redis
@@ -74,21 +80,21 @@ class NextTrack(Resource):
         args = parser.parse_args()
 
         # TODO Seminar 6 step 6: Wire RECOMMENDERS A/B experiment
-        treatment = Experiments.RECOMMENDERS.assign(user)
+        treatment = Experiments.CONTEXTUALWITHREDIRECT2.assign(user)
         if treatment == Treatment.T1:
-            recommender = StickyArtist(tracks_redis.connection, artists_redis.connection, catalog)
-        elif treatment == Treatment.T2:
-            recommender = TopPop(tracks_redis.connection, catalog.top_tracks[:100])
-        elif treatment == Treatment.T3:
-            recommender = Indexed(tracks_redis.connection, recommendations_ub_redis.connection, catalog)
-        elif treatment == Treatment.T4:
-            recommender = Indexed(tracks_redis.connection, recommendations_redis.connection, catalog)
-        elif treatment == Treatment.T5:
-            recommender = Contextual(tracks_redis.connection, catalog)
-        elif treatment == Treatment.T6:
-            recommender = Contextual(tracks_with_diverse_recs_redis.connection, catalog)
+            recommender = Contextual0_5(tracks_redis.connection, recommendations_redis, catalog)
+#        if treatment == Treatment.T2:
+#            recommender = Contextual2(tracks_redis.connection, recommendations_redis, catalog)
+#        elif treatment == Treatment.T3:
+#            recommender = Contextual3(tracks_redis.connection, recommendations_redis, catalog)
+#        elif treatment == Treatment.T4:
+#            recommender = Contextual0_5(tracks_redis.connection, recommendations_redis, catalog)
+#        elif treatment == Treatment.T5:
+#            recommender = Contextual0_25(tracks_redis.connection, recommendations_redis, catalog)
+#        elif treatment == Treatment.T6:
+#            recommender = ContextualTreshold(tracks_redis.connection, recommendations_redis, catalog)
         else:
-            recommender = Random(tracks_redis.connection)
+            recommender = Contextual(tracks_redis.connection, catalog)
 
         recommendation = recommender.recommend_next(user, args.track, args.time)
 

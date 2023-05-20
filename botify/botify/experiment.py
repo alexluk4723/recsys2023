@@ -17,6 +17,7 @@ class Split(Enum):
     HALF_HALF = 2
     FOUR_WAY = 4
     FIVE_WAY = 5
+    SIX_WAY = 6
     SEVEN_WAY = 7
 
 
@@ -65,6 +66,8 @@ class Experiments:
     PERSONALIZED = Experiment("PERSONALIZED", Split.HALF_HALF)
     CONTEXTUAL = Experiment("CONTEXTUAL", Split.HALF_HALF)
     RECOMMENDERS = Experiment("RECOMMENDERS", Split.SEVEN_WAY)
+    CONTEXTUALWITHREDIRECT = Experiment("CONTEXTUAL-WITH-REDIRECT", Split.SEVEN_WAY)
+    CONTEXTUALWITHREDIRECT2 = Experiment("CONTEXTUAL-WITH-REDIRECT2", Split.HALF_HALF)
 
     def __init__(self):
-        self.experiments = [Experiments.RECOMMENDERS]
+        self.experiments = [Experiments.CONTEXTUALWITHREDIRECT2]
